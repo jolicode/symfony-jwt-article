@@ -1,0 +1,129 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello{% endblock %}
+
+{% block body %}
+    <h1>You don't need JWT</h1>
+
+    <div class="row mb-4">
+        <div class="col-3 mr-4">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Are you connected?</h5>
+                    <p class="card-text">
+                        <span class="badge badge-success" id="connected">Yes</span>
+                        <span class="badge badge-danger" id="not-connected">No</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Sign In</h5>
+                    <p class="card-text">
+                        <form method="post" action="{{ url('api_login') }}" id="form-login">
+                            <div class="alert alert-danger" role="alert" id="login-error">
+                                The username / password is not valid (try: <code>lyrixx@lyrixx/password</code>)
+                            </div>
+                            <div class="mb-2">
+                                <label for="email" class="sr-only">Email</label>
+                                <input type="email" name="email" id="email" class="form-control" placeholder="Email" required autofocus>
+                                <label for="password" class="sr-only">Password</label>
+                                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                            </div>
+                            <button class="btn btn-primary" type="submit">
+                                Sign in
+                            </button>
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Call the API</h5>
+                    <button class="btn btn-sm btn-primary" type="submit" id="call">
+                        Call
+                    </button>
+                    <p class="card-text">
+                        Status Code: <span class="badge" id="result">N/A</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        const $connectedEl = document.getElementById('connected');
+        const $notConnectedEl = document.getElementById('not-connected');
+        const $callEl = document.getElementById('call');
+        const $resultEl = document.getElementById('result');
+        const $formLoginEl = document.getElementById('form-login');
+        const $emailEl = document.getElementById('email');
+        const $passwordEl = document.getElementById('password');
+        const $loginErrorEl = document.getElementById('login-error');
+
+        let apiToken = null;
+
+        $connectedEl.classList.add('d-none');
+        $loginErrorEl.classList.add('d-none');
+
+        $callEl.addEventListener('click', async () => {
+            $resultEl.innerHTML = '';
+            $resultEl.classList.remove('badge-primary', 'badge-danger');
+
+            const headers = new Headers();
+            headers.append('Content-Type', 'application/json');
+            if (apiToken) {
+                headers.append('Authorization', 'Basic '+btoa(apiToken+':'));
+            }
+
+            const response = await fetch(new Request('/api', {
+                headers,
+            }));
+
+            $resultEl.innerHTML = response.status;
+            if (200 == response.status) {
+                $resultEl.classList.add('badge-primary')
+            } else {
+                $resultEl.classList.add('badge-danger')
+            }
+        });
+
+        $formLoginEl.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            apiToken = null
+            $connectedEl.classList.add('d-none');
+            $notConnectedEl.classList.remove('d-none');
+            $loginErrorEl.classList.add('d-none');
+
+            const request = new Request($formLoginEl.action, {
+                method: 'POST',
+                body: JSON.stringify({username: email.value, password: password.value}),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const response = await fetch(request);
+
+            if (200 === response.status) {
+                $loginErrorEl.classList.add('d-none');
+                $connectedEl.classList.remove('d-none');
+                $notConnectedEl.classList.add('d-none');
+                apiToken = (await response.json()).apiToken;
+            } else {
+                $loginErrorEl.classList.remove('d-none');
+            }
+        });
+    </script>
+
+{% endblock %}
