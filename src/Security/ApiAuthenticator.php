@@ -10,12 +10,9 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
 class ApiAuthenticator extends AbstractGuardAuthenticator
 {
-    use TargetPathTrait;
-
     private $userRepository;
 
     public function __construct(UserRepository $userRepository)

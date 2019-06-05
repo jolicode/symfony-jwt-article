@@ -12,6 +12,9 @@
                     <h5 class="card-title">Are you connected?</h5>
                     <p class="card-text">
                         <span class="badge badge-success" id="connected">Yes</span>
+                        <button class="btn btn-sm btn-primary" id="logout">
+                            Sign logout
+                        </button>
                         <span class="badge badge-danger" id="not-connected">No</span>
                     </p>
                 </div>
@@ -24,7 +27,7 @@
                     <p class="card-text">
                         <form method="post" action="{{ url('api_login') }}" id="form-login">
                             <div class="alert alert-danger" role="alert" id="login-error">
-                                The username / password is not valid (try: <code>lyrixx@lyrixx/password</code>)
+                                The username / password is not valid (try: <code>lyrixx@lyrixx.info</code> / <code>password</code>)
                             </div>
                             <div class="mb-2">
                                 <label for="email" class="sr-only">Email</label>
@@ -70,11 +73,13 @@
         const $emailEl = document.getElementById('email');
         const $passwordEl = document.getElementById('password');
         const $loginErrorEl = document.getElementById('login-error');
+        const $logoutEl = document.getElementById('logout');
 
         let apiToken = null;
 
         $connectedEl.classList.add('d-none');
         $loginErrorEl.classList.add('d-none');
+        $logoutEl.classList.add('d-none');
 
         $callEl.addEventListener('click', async () => {
             $resultEl.innerHTML = '';
@@ -92,10 +97,17 @@
 
             $resultEl.innerHTML = response.status;
             if (200 == response.status) {
-                $resultEl.classList.add('badge-primary')
+                $resultEl.classList.add('badge-success')
             } else {
                 $resultEl.classList.add('badge-danger')
             }
+        });
+
+        $logoutEl.addEventListener('click', () => {
+            apiToken = null;
+            $connectedEl.classList.add('d-none');
+            $notConnectedEl.classList.remove('d-none');
+            $logoutEl.classList.add('d-none');
         });
 
         $formLoginEl.addEventListener('submit', async (e) => {
@@ -117,6 +129,7 @@
 
             if (200 === response.status) {
                 $loginErrorEl.classList.add('d-none');
+                $logoutEl.classList.remove('d-none');
                 $connectedEl.classList.remove('d-none');
                 $notConnectedEl.classList.add('d-none');
                 apiToken = (await response.json()).apiToken;

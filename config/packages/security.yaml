@@ -1,9 +1,8 @@
 security:
     encoders:
         App\Entity\User:
-            algorithm: argon2i
+            algorithm: auto
 
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         users:
             entity:
@@ -20,13 +19,11 @@ security:
             stateless: true
             json_login:
                 check_path: api_login
-            provider: users
 
         api:
             pattern: ^/api
             anonymous: false
             stateless: true
-            provider: users
             guard:
                 authenticators:
                     - App\Security\ApiAuthenticator
