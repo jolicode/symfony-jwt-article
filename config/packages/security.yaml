@@ -22,7 +22,7 @@ security:
 
         api:
             pattern: ^/api
-            anonymous: false
+            anonymous: true
             stateless: true
             guard:
                 authenticators:

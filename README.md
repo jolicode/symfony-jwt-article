@@ -20,3 +20,12 @@ You can create a `.env.local` file, and override env var defined in `.env` in it
 * [`security.yaml`](./config/packages/security.yaml)
 * [The user class](./src/Entity/User.php)
 * [A very simple JS application](./templates/frontend/index.html.twig)
+
+## Demo with auth or not
+
+```
+$ curl http://127.0.0.1:8001/api
+"no user"
+$ curl http://127.0.0.1:8001/api -H "Authorization: basic NjFiYmVhZWFlOGIzMDk5OWNmZDFjYWYxMGMzZWU3ZmFhZjc5OGViNDo="
+"has user"
+```

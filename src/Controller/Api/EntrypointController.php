@@ -14,7 +14,7 @@ class EntrypointController extends AbstractController
      */
     public function index()
     {
-        return new JsonResponse('OK');
+        return new JsonResponse($this->getUser() ? 'has user' : 'no user');
     }
 
     /**

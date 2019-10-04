@@ -51,7 +51,7 @@ class ApiAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
-        return new Response('', 401);
+        return null;
     }
 
     public function supportsRememberMe()
